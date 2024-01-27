@@ -35,10 +35,10 @@ func TestSlogging(t *testing.T) {
 
 func NestedParam(value string) logcore.SlogParam {
 	return func(c *logcore.SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Group("nested", logcore.TurnMapToAttrs(map[string]any{
+		c.Append(slog.Group("nested", logcore.AttrsToAny(logcore.TurnMapToAttrs(map[string]any{
 			"smth":   "abc",
 			"number": 123,
-		})...))
+		}))...))
 	}
 }
 
@@ -49,8 +49,8 @@ type Smth struct {
 
 func NestedStructParam(value string) logcore.SlogParam {
 	return func(c *logcore.SlogGroup) {
-		c.Slogs = append(c.Slogs,
-			slog.Group("nested", logcore.TurnStructToAttrs(Smth{Value1: "123", Number1: 4})...),
+		c.Append(
+			slog.Group("nested", logcore.AttrsToAny(logcore.TurnStructToAttrs(Smth{Value1: "123", Number1: 4}))...),
 			slog.Int("not_nested", 345),
 		)
 	}

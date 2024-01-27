@@ -9,6 +9,18 @@ import (
 	"time"
 )
 
+func CompL[T any, V any](objs []T, lambda func(x T) V) []V {
+	results := make([]V, 0, len(objs))
+	for _, obj := range objs {
+		results = append(results, lambda(obj))
+	}
+	return results
+}
+
+func AttrsToAny(attrs []slog.Attr) []any {
+	return CompL(attrs, func(x slog.Attr) any { return any(x) })
+}
+
 func logGroupFiles() slog.Attr {
 	return slog.Group("files",
 		"file3", GetCallingFile(3),
@@ -30,8 +42,8 @@ func StructToMap(somestruct any) map[string]any {
 	return mapresult
 }
 
-func TurnMapToAttrs(params map[string]any) []SlogAttr {
-	anies := []any{}
+func TurnMapToAttrs(params map[string]any) []slog.Attr {
+	anies := []slog.Attr{}
 	for key, value := range params {
 		switch v := value.(type) {
 		case string:
@@ -49,7 +61,7 @@ func TurnMapToAttrs(params map[string]any) []SlogAttr {
 		case time.Time:
 			anies = append(anies, slog.Time(key, v))
 		case map[string]any:
-			anies = append(anies, slog.Group(key, TurnMapToAttrs(v)...))
+			anies = append(anies, slog.Group(key, AttrsToAny(TurnMapToAttrs(v))...))
 		default:
 			anies = append(anies, slog.String(key, fmt.Sprintf("%v", v)))
 		}
@@ -58,6 +70,6 @@ func TurnMapToAttrs(params map[string]any) []SlogAttr {
 	return anies
 }
 
-func TurnStructToAttrs(somestruct any) []SlogAttr {
+func TurnStructToAttrs(somestruct any) []slog.Attr {
 	return TurnMapToAttrs(StructToMap(somestruct))
 }

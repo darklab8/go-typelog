@@ -7,11 +7,17 @@ import (
 )
 
 type SlogGroup struct {
-	Slogs []SlogAttr
+	slogs []SlogAttr
 }
 
 func (s SlogGroup) Render() []SlogAttr {
-	return s.Slogs
+	return s.slogs
+}
+
+func (s SlogGroup) Append(params ...slog.Attr) {
+	for _, param := range params {
+		s.slogs = append(s.slogs, param)
+	}
 }
 
 type SlogParam func(r *SlogGroup)
@@ -29,67 +35,67 @@ func newSlogArgs(opts ...SlogParam) []SlogAttr {
 
 func TestParam(value int) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Int("test_param", value))
+		c.Append(slog.Int("test_param", value))
 	}
 }
 
 func Any(key string, value any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.String(key, fmt.Sprintf("%v", value)))
+		c.Append(slog.String(key, fmt.Sprintf("%v", value)))
 	}
 }
 
 func String(key string, value string) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.String(key, value))
+		c.Append(slog.String(key, value))
 	}
 }
 
 func Int(key string, value int) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Int(key, value))
+		c.Append(slog.Int(key, value))
 	}
 }
 func Int64(key string, value int64) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Int64(key, value))
+		c.Append(slog.Int64(key, value))
 	}
 }
 func Float32(key string, value float32) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Float64(key, float64(value)))
+		c.Append(slog.Float64(key, float64(value)))
 	}
 }
 func Time(key string, value time.Time) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Time(key, value))
+		c.Append(slog.Time(key, value))
 	}
 }
 func Float64(key string, value float64) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Float64(key, value))
+		c.Append(slog.Float64(key, value))
 	}
 }
 func Bool(key string, value bool) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Bool(key, value))
+		c.Append(slog.Bool(key, value))
 	}
 }
 
 func Expected(value any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.String("expected", fmt.Sprintf("%v", value)))
+		c.Append(slog.String("expected", fmt.Sprintf("%v", value)))
 	}
 }
 func Actual(value any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.String("actual", fmt.Sprintf("%v", value)))
+		c.Append(slog.String("actual", fmt.Sprintf("%v", value)))
 	}
 }
 
 func OptError(err error) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs,
+		c.Append(
 			slog.String("error_msg", fmt.Sprintf("%v", err)),
 			slog.String("error_type", fmt.Sprintf("%T", err)),
 		)
@@ -102,8 +108,8 @@ func Items[T any](value []T, item_name string) SlogParam {
 		if len(sliced_string) > 300 {
 			sliced_string = sliced_string[:300] + "...sliced string"
 		}
-		c.Slogs = append(c.Slogs, slog.String(item_name, fmt.Sprintf("%v", value)))
-		c.Slogs = append(c.Slogs, slog.String(fmt.Sprintf("%s_len", item_name), fmt.Sprintf("%d", len(value))))
+		c.Append(slog.String(item_name, fmt.Sprintf("%v", value)))
+		c.Append(slog.String(fmt.Sprintf("%s_len", item_name), fmt.Sprintf("%d", len(value))))
 	}
 }
 
@@ -117,24 +123,25 @@ func Args(value []string) SlogParam {
 
 func Bytes(key string, value []byte) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.String(key, string(value)))
+		c.Append(slog.String(key, string(value)))
 	}
 }
 
 func Struct(value any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, TurnMapToAttrs(StructToMap(value))...)
+		c.Append(TurnMapToAttrs(StructToMap(value))...)
 	}
 }
 
 func NestedStruct(key string, value any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, slog.Group(key, TurnMapToAttrs(StructToMap(value))...))
+		attrs := TurnMapToAttrs(StructToMap(value))
+		c.Append(slog.Group(key, AttrsToAny(attrs)...))
 	}
 }
 
 func Map(value map[string]any) SlogParam {
 	return func(c *SlogGroup) {
-		c.Slogs = append(c.Slogs, TurnMapToAttrs(value)...)
+		c.Append(TurnMapToAttrs(value)...)
 	}
 }
