@@ -54,13 +54,12 @@ func (l *Logger) Error(msg string, opts ...SlogParam) {
 
 // Program is not allowed to run further with fatal
 func (l *Logger) Fatal(msg string, opts ...SlogParam) {
-	if IsMsgEnabled(l.level_log, LEVEL_FATAL) {
-		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
-		if l.enable_file_showing {
-			args = append(args, logGroupFiles())
-		}
-		l.logger.Error(msg, args...)
+	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
+	if l.enable_file_showing {
+		args = append(args, logGroupFiles())
 	}
+	l.logger.Error(msg, args...)
+
 	os.Exit(1)
 }
 
@@ -77,6 +76,9 @@ func (l *Logger) CheckDebug(err error, msg string, opts ...SlogParam) bool {
 	if err == nil {
 		return false
 	}
+	if !IsMsgEnabled(l.level_log, LEVEL_DEBUG) {
+		return true
+	}
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
 	l.logger.Debug(msg, args...)
@@ -87,6 +89,9 @@ func (l *Logger) CheckWarn(err error, msg string, opts ...SlogParam) bool {
 	if err == nil {
 		return false
 	}
+	if !IsMsgEnabled(l.level_log, LEVEL_WARN) {
+		return true
+	}
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
 	l.logger.Warn(msg, args...)
@@ -96,6 +101,9 @@ func (l *Logger) CheckWarn(err error, msg string, opts ...SlogParam) bool {
 func (l *Logger) CheckError(err error, msg string, opts ...SlogParam) bool {
 	if err == nil {
 		return false
+	}
+	if !IsMsgEnabled(l.level_log, LEVEL_ERROR) {
+		return true
 	}
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
