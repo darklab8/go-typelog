@@ -5,11 +5,12 @@ type LogLevel string
 func (l LogLevel) ToStr() string { return string(l) }
 
 const (
-	LEVEL_DEBUG LogLevel = "DEBUG"
-	LEVEL_INFO  LogLevel = "INFO"
-	LEVEL_WARN  LogLevel = "WARN"
-	LEVEL_ERROR LogLevel = "ERROR"
-	LEVEL_FATAL LogLevel = "FATAL"
+	LEVEL_DEBUG        LogLevel = "DEBUG"
+	LEVEL_INFO         LogLevel = "INFO"
+	LEVEL_WARN         LogLevel = "WARN"
+	LEVEL_ERROR        LogLevel = "ERROR"
+	LEVEL_FATAL        LogLevel = "FATAL"
+	LEVEL_DEFAULT_WARN LogLevel = ""
 )
 
 func LevelToInt(level LogLevel) int {
@@ -24,6 +25,8 @@ func LevelToInt(level LogLevel) int {
 		return 40
 	case LEVEL_FATAL:
 		return 50
+	case LEVEL_DEFAULT_WARN:
+		return 30
 	}
 	panic("not supported log level")
 }

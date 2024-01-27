@@ -49,7 +49,7 @@ func WithLogLevel(log_level_str LogLevel) LoggerParam {
 			programLevel.Set(slog.LevelWarn)
 		case LEVEL_ERROR:
 			programLevel.Set(slog.LevelError)
-		case "":
+		case LEVEL_DEFAULT_WARN:
 			programLevel.Set(slog.LevelWarn)
 		default:
 			panic(fmt.Sprintf("invalid log level=%s for logger=%s", log_level_str, logger.name))
