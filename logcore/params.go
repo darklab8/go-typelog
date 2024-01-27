@@ -14,7 +14,7 @@ func (s SlogGroup) Render() []SlogAttr {
 	return s.slogs
 }
 
-func (s SlogGroup) Append(params ...slog.Attr) {
+func (s *SlogGroup) Append(params ...slog.Attr) {
 	for _, param := range params {
 		s.slogs = append(s.slogs, param)
 	}
@@ -136,7 +136,7 @@ func Struct(value any) SlogParam {
 func NestedStruct(key string, value any) SlogParam {
 	return func(c *SlogGroup) {
 		attrs := TurnMapToAttrs(StructToMap(value))
-		c.Append(slog.Group(key, AttrsToAny(attrs)...))
+		c.Append(Group(key, attrs...))
 	}
 }
 

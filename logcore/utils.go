@@ -17,10 +17,6 @@ func CompL[T any, V any](objs []T, lambda func(x T) V) []V {
 	return results
 }
 
-func AttrsToAny(attrs []slog.Attr) []any {
-	return CompL(attrs, func(x slog.Attr) any { return any(x) })
-}
-
 func logGroupFiles() slog.Attr {
 	return slog.Group("files",
 		"file3", GetCallingFile(3),
@@ -61,7 +57,7 @@ func TurnMapToAttrs(params map[string]any) []slog.Attr {
 		case time.Time:
 			anies = append(anies, slog.Time(key, v))
 		case map[string]any:
-			anies = append(anies, slog.Group(key, AttrsToAny(TurnMapToAttrs(v))...))
+			anies = append(anies, Group(key, TurnMapToAttrs(v)...))
 		default:
 			anies = append(anies, slog.String(key, fmt.Sprintf("%v", v)))
 		}
@@ -72,4 +68,8 @@ func TurnMapToAttrs(params map[string]any) []slog.Attr {
 
 func TurnStructToAttrs(somestruct any) []slog.Attr {
 	return TurnMapToAttrs(StructToMap(somestruct))
+}
+
+func Group(name string, attrs ...slog.Attr) slog.Attr {
+	return slog.Group(name, CompL(attrs, func(x slog.Attr) SlogAttr { return SlogAttr(x) })...)
 }
