@@ -67,7 +67,7 @@ func TestCopyingLoggers(t *testing.T) {
 	logger := logcore.NewLogger("test", logcore.WithLogLevel(logcore.LEVEL_DEBUG), logcore.WithJsonFormat(true))
 
 	logger1 := logger.WithFields(logcore.String("smth", "123"))
-	logger2 := logger1.WithFields(logcore.Int("smth2", 2))
+	logger2 := logger1.WithFields(logcore.Int("smth2", 2), logcore.String("anotheparam", "abc"))
 	logger3 := logger2.WithFields(logcore.Time("smth3", time.Now()))
 
 	logger1.Info("logger1 printed")

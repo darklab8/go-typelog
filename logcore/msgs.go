@@ -8,8 +8,7 @@ import (
 
 func (l *Logger) Debug(msg string, opts ...SlogParam) {
 	if IsMsgEnabled(l.level_log, LEVEL_DEBUG) {
-		args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-		args = append(args, newSlogArgs(opts...)...)
+		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
 			args = append(args, logGroupFiles())
 		}
@@ -20,8 +19,7 @@ func (l *Logger) Debug(msg string, opts ...SlogParam) {
 
 func (l *Logger) Info(msg string, opts ...SlogParam) {
 	if IsMsgEnabled(l.level_log, LEVEL_INFO) {
-		args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-		args = append(args, newSlogArgs(opts...)...)
+		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
 			args = append(args, logGroupFiles())
 		}
@@ -33,8 +31,7 @@ func (l *Logger) Info(msg string, opts ...SlogParam) {
 // Just potentially bad behavior to be aware of
 func (l *Logger) Warn(msg string, opts ...SlogParam) {
 	if IsMsgEnabled(l.level_log, LEVEL_WARN) {
-		args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-		args = append(args, newSlogArgs(opts...)...)
+		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
 			args = append(args, logGroupFiles())
 		}
@@ -46,8 +43,7 @@ func (l *Logger) Warn(msg string, opts ...SlogParam) {
 // It is bad but program can recover from it
 func (l *Logger) Error(msg string, opts ...SlogParam) {
 	if IsMsgEnabled(l.level_log, LEVEL_ERROR) {
-		args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-		args = append(args, newSlogArgs(opts...)...)
+		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
 			args = append(args, logGroupFiles())
 		}
@@ -59,8 +55,7 @@ func (l *Logger) Error(msg string, opts ...SlogParam) {
 // Program is not allowed to run further with fatal
 func (l *Logger) Fatal(msg string, opts ...SlogParam) {
 	if IsMsgEnabled(l.level_log, LEVEL_FATAL) {
-		args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-		args = append(args, newSlogArgs(opts...)...)
+		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
 			args = append(args, logGroupFiles())
 		}
@@ -70,8 +65,7 @@ func (l *Logger) Fatal(msg string, opts ...SlogParam) {
 }
 
 func (l *Logger) Panic(msg string, opts ...SlogParam) {
-	args := append([]SlogAttr{}, newSlogArgs(l.default_params...)...)
-	args = append(args, newSlogArgs(opts...)...)
+	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	if l.enable_file_showing {
 		args = append(args, logGroupFiles())
 	}

@@ -14,7 +14,6 @@ type Logger struct {
 	enable_json_format  bool
 	log_level_slog      *slog.LevelVar
 	level_log           LogLevel
-	default_params      []SlogParam
 }
 
 type LoggerParam func(r *Logger)
@@ -110,6 +109,7 @@ func (logger *Logger) Initialized() *Logger {
 
 func (l *Logger) WithFields(opts ...SlogParam) *Logger {
 	var new_logger Logger = *l
-	new_logger.default_params = append(l.default_params, opts...)
+	new_logger.Initialized()
+	new_logger.logger = new_logger.logger.With(newSlogArgs(opts...)...)
 	return &new_logger
 }
