@@ -8,6 +8,7 @@ Static typing approach brings here consistent way to define key values to final 
 # Features
 
 - Accepts static typed components as optional params
+  - it will not accept `any` options as slog.
   - has shortcut WithFields, to make clone of the logger with default logging fields
 - Easy to turn on/off parameters by environment variables
   - Ability to define different log levels for different created loggers
