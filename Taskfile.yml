@@ -1,0 +1,9 @@
+version: "3"
+
+tasks:
+  test:
+    cmds:
+      - go test ./... -coverprofile=cover.out {{.CLI_ARGS}}
+    env:
+      AUTOGIT_PROJECT_FOLDER:
+        sh: echo "$(pwd)"
