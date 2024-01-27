@@ -10,7 +10,7 @@ Static typing approach brings here consistent way to define key values to final 
 - Accepts static typed components as optional params
   - has shortcut WithFields, to make clone of the logger with default logging fields
 - Easy to turn on/off parameters by environment variables
-  - Ability to define different log levss for different created loggers
+  - Ability to define different log levels for different created loggers
 - Easier turning complex objects into structured logging
   - accepts maps and structs as its params. It will parse them on their own.
 
