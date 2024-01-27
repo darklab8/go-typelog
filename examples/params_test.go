@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"log/slog"
 	"testing"
 	"time"
 
@@ -34,10 +35,10 @@ func TestSlogging(t *testing.T) {
 
 func NestedParam(value string) logcore.SlogParam {
 	return func(c *logcore.SlogGroup) {
-		c.Params["nested"] = map[string]any{
+		c.Slogs = append(c.Slogs, slog.Group("nested", logcore.TurnMapToAttrs(map[string]any{
 			"smth":   "abc",
 			"number": 123,
-		}
+		})...))
 	}
 }
 
@@ -46,10 +47,12 @@ type Smth struct {
 	Number1 int
 }
 
-func NestedStructTest(value string) logcore.SlogParam {
+func NestedStructParam(value string) logcore.SlogParam {
 	return func(c *logcore.SlogGroup) {
-		c.Params["nested"] = logcore.StructToMap(Smth{Value1: "123", Number1: 4})
-		c.Params["not_nested"] = 345
+		c.Slogs = append(c.Slogs,
+			slog.Group("nested", logcore.TurnStructToAttrs(Smth{Value1: "123", Number1: 4})...),
+			slog.Int("not_nested", 345),
+		)
 	}
 }
 
@@ -57,7 +60,7 @@ func TestNested(t *testing.T) {
 	logger := logcore.NewLogger("test", logcore.WithLogLevel(logcore.LEVEL_DEBUG), logcore.WithJsonFormat(true))
 
 	logger.Debug("123", NestedParam("abc"))
-	logger.Debug("456", NestedStructTest("abc"))
+	logger.Debug("456", NestedStructParam("abc"))
 }
 
 func TestCopyingLoggers(t *testing.T) {

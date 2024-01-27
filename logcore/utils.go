@@ -3,9 +3,18 @@ package logcore
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"path/filepath"
 	"runtime"
+	"time"
 )
+
+func logGroupFiles() slog.Attr {
+	return slog.Group("files",
+		"file3", GetCallingFile(3),
+		"file4", GetCallingFile(4),
+	)
+}
 
 func GetCallingFile(level int) string {
 	GetTwiceParentFunctionLocation := level
@@ -19,4 +28,36 @@ func StructToMap(somestruct any) map[string]any {
 	inrec, _ := json.Marshal(somestruct)
 	json.Unmarshal(inrec, &mapresult)
 	return mapresult
+}
+
+func TurnMapToAttrs(params map[string]any) []SlogAttr {
+	anies := []any{}
+	for key, value := range params {
+		switch v := value.(type) {
+		case string:
+			anies = append(anies, slog.String(key, v))
+		case int:
+			anies = append(anies, slog.Int(key, v))
+		case int64:
+			anies = append(anies, slog.Int64(key, v))
+		case float64:
+			anies = append(anies, slog.Float64(key, v))
+		case float32:
+			anies = append(anies, slog.Float64(key, float64(v)))
+		case bool:
+			anies = append(anies, slog.Bool(key, v))
+		case time.Time:
+			anies = append(anies, slog.Time(key, v))
+		case map[string]any:
+			anies = append(anies, slog.Group(key, TurnMapToAttrs(v)...))
+		default:
+			anies = append(anies, slog.String(key, fmt.Sprintf("%v", v)))
+		}
+	}
+
+	return anies
+}
+
+func TurnStructToAttrs(somestruct any) []SlogAttr {
+	return TurnMapToAttrs(StructToMap(somestruct))
 }
