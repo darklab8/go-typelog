@@ -1,11 +1,11 @@
-Static typed structured logging
+# Typelog - Static typed structured logging
 
-# Description
+## Description
 
 This project araised from the need to log backend applications, aws lambdas and other stuff in modern cloud ecosystem. Logging systems today are able easily parsing JSON format out of the box.
 Static typing approach brings here consistent way to define key values to final msg, as well as easier following Domain Driven Design, where logs consistently describe what they log. Static typed logging brings easy refactoring to any present logs.
 
-# Features
+## Features
 
 - Accepts static typed components as optional params
   - it will not accept `any` options as slog.
@@ -17,11 +17,11 @@ Static typing approach brings here consistent way to define key values to final 
 
 [See folder examples](./examples)
 
-# Alternative Versions
+## Alternative Versions
 
 - [Version in python](https://github.com/darklab8/py-typelog)
 
-# How to use
+## How to use
 
 examples/logger/main.go
 ```go
