@@ -1,4 +1,4 @@
-package logcore
+package typelog
 
 import (
 	"os"

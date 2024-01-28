@@ -1,4 +1,4 @@
-package logcore
+package typelog
 
 import (
 	"fmt"
@@ -107,7 +107,7 @@ func (logger *Logger) Initialized() *Logger {
 	return logger
 }
 
-func (l *Logger) WithFields(opts ...SlogParam) *Logger {
+func (l *Logger) WithFields(opts ...LogType) *Logger {
 	var new_logger Logger = *l
 	new_logger.Initialized()
 	new_logger.logger = new_logger.logger.With(newSlogArgs(opts...)...)

@@ -19,4 +19,4 @@ Static typing approach brings here consistent way to define key values to final 
 
 # Alternative Versions
 
-- [Version in python](https://github.com/darklab8/loguspy)
+- [Version in python](https://github.com/darklab8/py-typelog)

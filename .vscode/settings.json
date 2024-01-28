@@ -3,13 +3,13 @@
         "-v"
     ],
     "go.testEnvVars": {
-        "LOGUS_LOG_LEVEL": "DEBUG",
-        "LOGUS_LOG_JSON": "true"
+        "TYPELOG_LOG_LEVEL": "DEBUG",
+        "TYPELOG_LOG_JSON": "true"
     },
     "go.testTimeout": "30000s",
     "editor.formatOnSave": true,
     "terminal.integrated.env.linux": {
-        "LOGUS_LOG_LEVEL": "DEBUG",
-        "LOGUS_LOG_JSON": "true"
+        "TYPELOG_LOG_LEVEL": "DEBUG",
+        "TYPELOG_LOG_JSON": "true"
     }
 }

@@ -1,4 +1,4 @@
-package logcore
+package typelog
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func (l *Logger) Debug(msg string, opts ...SlogParam) {
+func (l *Logger) Debug(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_DEBUG) {
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
@@ -17,7 +17,7 @@ func (l *Logger) Debug(msg string, opts ...SlogParam) {
 
 }
 
-func (l *Logger) Info(msg string, opts ...SlogParam) {
+func (l *Logger) Info(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_INFO) {
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
@@ -29,7 +29,7 @@ func (l *Logger) Info(msg string, opts ...SlogParam) {
 }
 
 // Just potentially bad behavior to be aware of
-func (l *Logger) Warn(msg string, opts ...SlogParam) {
+func (l *Logger) Warn(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_WARN) {
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
@@ -41,7 +41,7 @@ func (l *Logger) Warn(msg string, opts ...SlogParam) {
 }
 
 // It is bad but program can recover from it
-func (l *Logger) Error(msg string, opts ...SlogParam) {
+func (l *Logger) Error(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_ERROR) {
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_showing {
@@ -53,7 +53,7 @@ func (l *Logger) Error(msg string, opts ...SlogParam) {
 }
 
 // Program is not allowed to run further with fatal
-func (l *Logger) Fatal(msg string, opts ...SlogParam) {
+func (l *Logger) Fatal(msg string, opts ...LogType) {
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	if l.enable_file_showing {
 		args = append(args, logGroupFiles())
@@ -63,7 +63,7 @@ func (l *Logger) Fatal(msg string, opts ...SlogParam) {
 	os.Exit(1)
 }
 
-func (l *Logger) Panic(msg string, opts ...SlogParam) {
+func (l *Logger) Panic(msg string, opts ...LogType) {
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	if l.enable_file_showing {
 		args = append(args, logGroupFiles())
@@ -72,7 +72,7 @@ func (l *Logger) Panic(msg string, opts ...SlogParam) {
 	panic(msg)
 }
 
-func (l *Logger) CheckDebug(err error, msg string, opts ...SlogParam) bool {
+func (l *Logger) CheckDebug(err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
 	}
@@ -85,7 +85,7 @@ func (l *Logger) CheckDebug(err error, msg string, opts ...SlogParam) bool {
 	return true
 }
 
-func (l *Logger) CheckWarn(err error, msg string, opts ...SlogParam) bool {
+func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
 	}
@@ -98,7 +98,7 @@ func (l *Logger) CheckWarn(err error, msg string, opts ...SlogParam) bool {
 	return true
 }
 
-func (l *Logger) CheckError(err error, msg string, opts ...SlogParam) bool {
+func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
 	}
@@ -112,7 +112,7 @@ func (l *Logger) CheckError(err error, msg string, opts ...SlogParam) bool {
 }
 
 // It has shorter error output in comparison to CheckPanic
-func (l *Logger) CheckFatal(err error, msg string, opts ...SlogParam) {
+func (l *Logger) CheckFatal(err error, msg string, opts ...LogType) {
 	if err == nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (l *Logger) CheckFatal(err error, msg string, opts ...SlogParam) {
 	os.Exit(1)
 }
 
-func (l *Logger) CheckPanic(err error, msg string, opts ...SlogParam) {
+func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
 	if err == nil {
 		return
 	}
