@@ -1,13 +1,24 @@
 package examples
 
 import (
-	"log/slog"
 	"testing"
 	"time"
 
 	"github.com/darklab8/go-typelog/examples/logger"
+	"github.com/darklab8/go-typelog/examples/typedlogs"
+	"github.com/darklab8/go-typelog/examples/types"
 	"github.com/darklab8/go-typelog/typelog"
 )
+
+func TestTypedLogs(t *testing.T) {
+	worker_id := types.WorkerID(5)
+	logger.Log.Info("Worker was started", typedlogs.WorkerID(worker_id))
+
+	logger := logger.Log.WithFields(typedlogs.WorkerID(worker_id), typedlogs.TaskID("abc"))
+	logger.Info("Worker started task")
+
+	logger.Info("Worker finished task")
+}
 
 func TestUsingInitialized(t *testing.T) {
 
@@ -33,34 +44,11 @@ func TestSlogging(t *testing.T) {
 	logger.Debug("123", typelog.TestParam(456))
 }
 
-func NestedParam(value string) typelog.LogType {
-	return func(c *typelog.LogAtrs) {
-		c.Append(typelog.Group("nested", typelog.TurnMapToAttrs(map[string]any{
-			"smth":   "abc",
-			"number": 123,
-		})...))
-	}
-}
-
-type Smth struct {
-	Value1  string
-	Number1 int
-}
-
-func NestedStructParam(value string) typelog.LogType {
-	return func(c *typelog.LogAtrs) {
-		c.Append(
-			typelog.Group("nested", typelog.TurnStructToAttrs(Smth{Value1: "123", Number1: 4})...),
-			slog.Int("not_nested", 345),
-		)
-	}
-}
-
 func TestNested(t *testing.T) {
 	logger := typelog.NewLogger("test", typelog.WithLogLevel(typelog.LEVEL_DEBUG), typelog.WithJsonFormat(true))
 
-	logger.Debug("123", NestedParam("abc"))
-	logger.Debug("456", NestedStructParam("abc"))
+	logger.Debug("123", typedlogs.NestedParam("abc"))
+	logger.Debug("456", typedlogs.NestedStructParam("abc"))
 }
 
 func TestCopyingLoggers(t *testing.T) {
