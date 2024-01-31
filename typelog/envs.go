@@ -2,8 +2,13 @@ package typelog
 
 import (
 	"os"
+	"strings"
 )
 
-var EnvTurnJSON bool = os.Getenv("LOGUS_LOG_JSON") == "true"
+const (
+	TOOL_NAME = "typelog"
+)
 
-var EnvTurnFileShowing bool = os.Getenv("LOGUS_LOG_FILE_SHOWING") == "true"
+var EnvTurnJSON bool = os.Getenv(strings.ToUpper(TOOL_NAME)+"_LOG_JSON") == "true"
+
+var EnvTurnFileShowing bool = os.Getenv(strings.ToUpper(TOOL_NAME)+"_LOG_FILE_SHOWING") == "true"
