@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darklab8/go-typelog/examples/logger"
+	"github.com/darklab8/go-typelog/examples/logus"
 	"github.com/darklab8/go-typelog/examples/typedlogs"
 	"github.com/darklab8/go-typelog/examples/types"
 	"github.com/darklab8/go-typelog/typelog"
@@ -12,9 +12,9 @@ import (
 
 func TestTypedLogs(t *testing.T) {
 	worker_id := types.WorkerID(5)
-	logger.Log.Info("Worker was started", typedlogs.WorkerID(worker_id))
+	logus.Log.Info("Worker was started", typedlogs.WorkerID(worker_id))
 
-	logger := logger.Log.WithFields(typedlogs.WorkerID(worker_id), typedlogs.TaskID("abc"))
+	logger := logus.Log.WithFields(typedlogs.WorkerID(worker_id), typedlogs.TaskID("abc"))
 	logger.Info("Worker started task")
 
 	logger.Info("Worker finished task")
@@ -22,16 +22,16 @@ func TestTypedLogs(t *testing.T) {
 
 func TestUsingInitialized(t *testing.T) {
 
-	logger.Log.Debug("123")
+	logus.Log.Debug("123")
 
-	logger.Log.Debug("123", typelog.TestParam(456))
+	logus.Log.Debug("123", typelog.TestParam(456))
 
-	logger1 := logger.Log.WithFields(typelog.Int("worker_id", 10))
+	logger1 := logus.Log.WithFields(typelog.Int("worker_id", 10))
 
 	logger1.Info("Worker made action1")
 	logger1.Info("Worker made action2")
 
-	logger2 := logger.Log.WithFields(typelog.Float64("smth", 13.54))
+	logger2 := logus.Log.WithFields(typelog.Float64("smth", 13.54))
 	logger2.Debug("try now")
 	logger1.Info("Worker made action1", typelog.Bool("is_check", false))
 }
