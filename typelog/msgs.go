@@ -129,5 +129,5 @@ func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
 	l.logger.Error(msg, args...)
-	panic(msg)
+	panic(fmt.Sprintf("msg=%s, err=%s errT=%T", msg, err.Error(), err))
 }
