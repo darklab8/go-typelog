@@ -1,6 +1,8 @@
 package examples
 
 import (
+	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -66,4 +68,15 @@ func TestCopyingLoggers(t *testing.T) {
 	logger1.Info("logger1 printed")
 	logger2.Info("logger2 printed")
 	logger3.Info("logger3 printed")
+}
+
+func TestPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered. Error:\n", r)
+		}
+	}()
+
+	logger := typelog.NewLogger("test", typelog.WithLogLevel(typelog.LEVEL_DEBUG), typelog.WithJsonFormat(true))
+	logger.CheckPanic(errors.New("my custom error"), "i panicked", typelog.Any("smth", 123))
 }
