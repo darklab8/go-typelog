@@ -49,6 +49,11 @@ func TestNested(t *testing.T) {
 
 	logger.Debug("123", typedlogs.NestedParam("abc"))
 	logger.Debug("456", typedlogs.NestedStructParam("abc"))
+
+	logger.Debug("456", typelog.NestedMap("smth", map[string]any{
+		"a": 1,
+		"b": 2,
+	}))
 }
 
 func TestCopyingLoggers(t *testing.T) {

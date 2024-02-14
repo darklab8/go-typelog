@@ -147,3 +147,9 @@ func Map(value map[string]any) LogType {
 		c.Append(TurnMapToAttrs(value)...)
 	}
 }
+
+func NestedMap(key string, value map[string]any) LogType {
+	return func(c *LogAtrs) {
+		c.Append(Group(key, TurnMapToAttrs(value)...))
+	}
+}
