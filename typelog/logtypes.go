@@ -108,7 +108,7 @@ func Items[T any](item_name string, value []T) LogType {
 		if len(sliced_string) > 300 {
 			sliced_string = sliced_string[:300] + "...sliced string"
 		}
-		c.Append(slog.String(item_name, fmt.Sprintf("%v", value)))
+		c.Append(slog.String(item_name, fmt.Sprintf("%v", sliced_string)))
 		c.Append(slog.String(fmt.Sprintf("%s_len", item_name), fmt.Sprintf("%d", len(value))))
 	}
 }
