@@ -4,12 +4,14 @@
     ],
     "go.testEnvVars": {
         "TYPELOG_LOG_LEVEL": "DEBUG",
-        "TYPELOG_LOG_JSON": "true"
+        "TYPELOG_LOG_JSON": "true",
+        "OTEL_RESOURCE_ATTRIBUTES": "service.name=dice,service.version=0.1.0",
     },
     "go.testTimeout": "30000s",
     "editor.formatOnSave": true,
     "terminal.integrated.env.linux": {
         "TYPELOG_LOG_LEVEL": "DEBUG",
-        "TYPELOG_LOG_JSON": "true"
+        "TYPELOG_LOG_JSON": "true",
+        "OTEL_RESOURCE_ATTRIBUTES": "service.name=dice,service.version=0.1.0",
     }
 }

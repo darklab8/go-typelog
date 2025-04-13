@@ -13,13 +13,15 @@ import (
 )
 
 type Logger struct {
-	logger              *slog.Logger
-	name                string
-	enable_file_showing bool
-	enable_json_format  bool
-	log_level_slog      *slog.LevelVar
-	level_log           LogLevel
-	io_writer           io.Writer
+	logger             *slog.Logger
+	name               string
+	scope              string
+	enable_file_shown  bool
+	enable_json_format bool
+	enable_scope_shown bool
+	log_level_slog     *slog.LevelVar
+	level_log          LogLevel
+	io_writer          io.Writer
 }
 
 type LoggerParam func(r *Logger)
@@ -36,9 +38,16 @@ func WithIoWriter(writer io.Writer) LoggerParam {
 	}
 }
 
+// file showing works meh. Use scopes instead
 func WithFileShowing(state bool) LoggerParam {
 	return func(logger *Logger) {
-		logger.enable_file_showing = state
+		logger.enable_file_shown = state
+	}
+}
+
+func WithScope(value bool) LoggerParam {
+	return func(logger *Logger) {
+		logger.enable_scope_shown = value
 	}
 }
 
@@ -85,13 +94,15 @@ func NewLogger(
 
 	logger := &Logger{
 		name:      name,
+		scope:     name,
 		io_writer: os.Stdout,
 	}
 	RegisteredLoggers = append(RegisteredLoggers, logger)
 
 	WithJsonFormat(Env.EnableJson)(logger)
-	WithFileShowing(Env.EnableFileShowing)(logger)
+	WithFileShowing(Env.EnableFileShown)(logger)
 	WithLogLevelStr(os.Getenv(strings.ToUpper(name) + "_LOG_LEVEL"))(logger)
+	WithScope(Env.EnableScopesShown)(logger)
 
 	for _, opt := range options {
 		opt(logger)
@@ -124,5 +135,12 @@ func (l *Logger) WithFields(opts ...LogType) *Logger {
 	var newLogger Logger = *l
 	newLogger.Initialized()
 	newLogger.logger = newLogger.logger.With(newSlogArgs(opts...)...)
+	return &newLogger
+}
+
+func (l *Logger) WithScope(scope string) *Logger {
+	var newLogger Logger = *l
+	newLogger.Initialized()
+	newLogger.scope = scope
 	return &newLogger
 }

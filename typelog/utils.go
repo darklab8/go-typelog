@@ -1,12 +1,15 @@
 package typelog
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"path/filepath"
 	"runtime"
 	"time"
+
+	"go.opentelemetry.io/otel/trace"
 )
 
 func CompL[T any, V any](objs []T, lambda func(x T) V) []V {
@@ -72,4 +75,14 @@ func TurnStructToAttrs(somestruct any) []slog.Attr {
 
 func Group(name string, attrs ...slog.Attr) slog.Attr {
 	return slog.Group(name, CompL(attrs, func(x slog.Attr) SlogAttr { return SlogAttr(x) })...)
+}
+
+func CtxOpts(ctx context.Context, opts ...LogType) []LogType {
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().HasSpanID() {
+		opts = append(opts, String("span_id", span.SpanContext().SpanID().String()))
+		opts = append(opts, String("trace_id", span.SpanContext().TraceID().String()))
+
+	}
+	return opts
 }
