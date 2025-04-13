@@ -14,6 +14,8 @@ Static typing approach brings here consistent way to define key values to final 
   - Ability to define different log levels for different created loggers
 - Easier turning complex objects into structured logging
   - accepts maps and structs as its params. It will parse them on their own.
+- has ability to show "scope" of current logging (from which module the logs are)
+- has ability to grab otlp span id/trace id if they are present
 
 [See folder examples](./examples)
 
