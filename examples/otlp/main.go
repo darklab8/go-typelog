@@ -153,6 +153,7 @@ func newHTTPHandler() http.Handler {
 }
 
 // Opentelemetry not able to do it natively because they support go 1.22, and this thing needs 1.23
+// https://github.com/open-telemetry/opentelemetry-go-contrib/issues/6193
 // spanNameFromPattern is a simple middleware that sets the name of the span in the request context to the pattern used
 // to match this request.
 func spanNameFromPattern(next http.Handler) http.Handler {
