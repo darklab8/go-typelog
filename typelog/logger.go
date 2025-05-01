@@ -97,15 +97,25 @@ func NewLogger(
 		scope:     name,
 		io_writer: os.Stdout,
 	}
-	RegisteredLoggers = append(RegisteredLoggers, logger)
 
-	WithJsonFormat(Env.EnableJson)(logger)
-	WithFileShowing(Env.EnableFileShown)(logger)
-	WithLogLevelStr(os.Getenv(strings.ToUpper(name) + "_LOG_LEVEL"))(logger)
-	WithScope(Env.EnableScopesShown)(logger)
+	RegisteredLoggers = append(RegisteredLoggers, logger)
 
 	for _, opt := range options {
 		opt(logger)
+	}
+
+	if EnvPresent.EnableJson {
+		WithJsonFormat(Env.EnableJson)(logger)
+	}
+	if EnvPresent.EnableFileShown {
+		WithFileShowing(Env.EnableFileShown)(logger)
+
+	}
+	if EnvPresent.EnableScopesShown {
+		WithScope(Env.EnableScopesShown)(logger)
+	}
+	if os.Getenv(strings.ToUpper(name)+"_LOG_LEVEL") != "" {
+		WithLogLevelStr(os.Getenv(strings.ToUpper(name) + "_LOG_LEVEL"))(logger)
 	}
 
 	return logger.Initialized()
