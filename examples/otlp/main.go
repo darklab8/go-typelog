@@ -15,13 +15,12 @@ import (
 
 	"math/rand"
 
+	"github.com/darklab8/go-typelog/otlp"
 	"github.com/darklab8/go-typelog/typelog"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func main() {
@@ -92,14 +91,11 @@ func run() (err error) {
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-
-	// Set up OpenTelemetry.
-	otelShutdown, err := setupOTelSDK(ctx)
+	otelShutdown, err := otlp.SetupOTelSDK(ctx) // Set up OpenTelemetry.
 	if err != nil {
 		return
 	}
-	// Handle shutdown properly so nothing leaks.
-	defer func() {
+	defer func() { // Handle shutdown properly so nothing leaks.
 		err = errors.Join(err, otelShutdown(context.Background()))
 	}()
 
@@ -109,7 +105,11 @@ func run() (err error) {
 		BaseContext:  func(_ net.Listener) context.Context { return ctx },
 		ReadTimeout:  time.Second,
 		WriteTimeout: 10 * time.Second,
-		Handler:      newHTTPHandler(),
+		Handler: otlp.NewHTTPHandler(http.NewServeMux(), func(handleFunc func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request))) {
+			// Register handlers.
+			handleFunc("/rolldice/", rolldice)
+			handleFunc("/rolldice/{player}", rolldice)
+		}),
 	}
 	srvErr := make(chan error, 1)
 	go func() {
@@ -130,41 +130,4 @@ func run() (err error) {
 	// When Shutdown is called, ListenAndServe immediately returns ErrServerClosed.
 	err = srv.Shutdown(context.Background())
 	return
-}
-
-func newHTTPHandler() http.Handler {
-	mux := http.NewServeMux()
-
-	// handleFunc is a replacement for mux.HandleFunc
-	// which enriches the handler's HTTP instrumentation with the pattern as the http.route.
-	handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
-		// Configure the "http.route" for the HTTP instrumentation.
-		handler := otelhttp.WithRouteTag(pattern, http.HandlerFunc(handlerFunc))
-		mux.Handle(pattern, handler)
-	}
-
-	// Register handlers.
-	handleFunc("/rolldice/", rolldice)
-	handleFunc("/rolldice/{player}", rolldice)
-
-	// Add HTTP instrumentation for the whole server.
-	handler := otelhttp.NewHandler(spanNameFromPattern(mux), "/")
-	return handler
-}
-
-// Opentelemetry not able to do it natively because they support go 1.22, and this thing needs 1.23
-// https://github.com/open-telemetry/opentelemetry-go-contrib/issues/6193
-// spanNameFromPattern is a simple middleware that sets the name of the span in the request context to the pattern used
-// to match this request.
-func spanNameFromPattern(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Call handler first, so http.ServeMux can populate r.Pattern
-		next.ServeHTTP(w, r)
-		// Set span name after the fact. As long as this middleware is used within otelhttp.Handler, the span should
-		// still be open and thus renameable.
-
-		// Log.Info("serving from http", typelog.Int("result", roll))
-
-		trace.SpanFromContext(r.Context()).SetName(r.Pattern)
-	})
 }
