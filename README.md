@@ -1,3 +1,7 @@
+# PROJECT IS MIGRATED
+
+to https://github.com/darklab8/go-utils . For convinience of not dealing with too much repositories.
+
 # Typelog - Static typed structured logging
 
 ## Description
